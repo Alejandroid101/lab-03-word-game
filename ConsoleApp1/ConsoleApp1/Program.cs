@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ConsoleApp1
@@ -179,8 +180,8 @@ namespace ConsoleApp1
             }
             while (true)
             {
-                Console.WriteLine("Write 'done' to finish removing words");
-                Console.Write("Enter word to remove:");
+                Console.WriteLine("Write 'done' to finish adding words");
+                Console.Write("Enter word to add to list:");
 
                 string addWord = Console.ReadLine();
 
@@ -199,6 +200,8 @@ namespace ConsoleApp1
                 }
 
             }
+            string[] words = FileSetup();
+            UserInterface(words);
         }
         public static void StartGame(string[] words)
         {
@@ -208,7 +211,74 @@ namespace ConsoleApp1
             int rdmIndex = rdmWord.Next(0, words.Length - 1);
             string guessing = words[rdmIndex];
 
+            //making List to hold guesses, then arrays for the letters in word and then one for the underscores.
+            List<string> guesses = new List<string>();
+            char[] letters = guessing.ToCharArray();
+            char[] underScore = new char[letters.Length];
 
+            //populate array with _ _ _ _.
+            for (int i = 0; i < underScore.Length; i++)
+            {
+                underScore[i] = '_';
+            }
+
+            bool playing = true;
+            while(playing)
+            {
+                Console.Clear();
+                for (int i = 0; i < underScore.Length; i++)
+                {
+                    Console.Write($"{underScore[i]} ");
+                }
+                Console.WriteLine();
+                Console.Write("Guesses: [");
+                foreach(var letter in guesses)
+                {
+                    Console.Write($"{letter} ");
+                }
+                Console.Write("]");
+                Console.WriteLine();
+
+                Console.WriteLine("Guess a letter. One at a time!!");
+                string inputLetter = Console.ReadLine();
+
+                if(inputLetter.Length > 1)
+                {
+                    Console.WriteLine("One letter at a time!");
+                }
+                else if(inputLetter.Length == 1)
+                {
+                    //all of this happens if the input is only ome character (one letter at a time).
+                    guesses.Add(inputLetter);
+                    char character = char.Parse(inputLetter);
+
+                    for (int i = 0; i < underScore.Length; i++)
+                    {
+                        if(letters[i] == character)
+                        {
+                            underScore[i] = character;
+                        }
+                    }
+                    for (int i = 0; i < underScore.Length; i++)
+                    {
+                        string s = new string(underScore);
+                        if (!s.Contains('_'))
+                        {
+                            playing = false;
+
+                        }
+                    }
+                    if(!playing)
+                    {
+                        Console.Clear();
+                        Console.WriteLine();
+                        Console.WriteLine("Awesome, you guessed the word!!");
+                    }
+                }
+
+
+            }
+            UserInterface(words);
 
         }
     }
